@@ -39,7 +39,7 @@ CLASSIFIERS = [
 ]
 
 extra_opts = {
-    'setup_requires': ['flake8==3.7.7', 'pytest-runner'],
+    'setup_requires': ['flake8==3.7.7', 'pytest-runner', 'configparser==3.5.0'],
     'tests_require': ['pytest', 'responses', 'mock']
 }
 
