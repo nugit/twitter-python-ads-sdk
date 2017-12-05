@@ -71,10 +71,6 @@ class Resource(object):
             attr = '_{0}'.format(name)
             value = getattr(self, attr, None) or getattr(self, name, None)
 
-            # skip attribute
-            if value is None:
-                continue
-
             if isinstance(value, datetime):
                 params[name] = format_time(value)
             elif isinstance(value, list):
