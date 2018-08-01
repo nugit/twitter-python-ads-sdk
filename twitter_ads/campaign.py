@@ -17,6 +17,7 @@ class TargetingCriteria(Resource, Persistence, Batch):
 targeting_criteria'
     RESOURCE_COLLECTION = '/' + API_VERSION + '/accounts/{account_id}/targeting_criteria'
     RESOURCE = '/' + API_VERSION + '/accounts/{account_id}/targeting_criteria/{id}'
+    RESOURCE_OPTIONS = '/' + API_VERSION + '/targeting_criteria/'
 
     @classmethod
     def all(klass, account, line_item_id, **kwargs):
@@ -28,6 +29,97 @@ targeting_criteria'
         request = Request(account.client, 'get', resource, params=params)
 
         return Cursor(klass, request, init_with=[account])
+
+    @classmethod
+    def app_store_categories(klass, account, **kwargs):
+        """Returns a list of supported app store categories"""
+        resource = klass.RESOURCE_OPTIONS + 'app_store_categories'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def behavior_taxonomies(klass, account, **kwargs):
+        """Returns a list of supported behavior taxonomies"""
+        resource = klass.RESOURCE_OPTIONS + 'behavior_taxonomies'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def behaviors(klass, account, **kwargs):
+        """Returns a list of supported behaviors"""
+        resource = klass.RESOURCE_OPTIONS + 'behaviors'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def devices(klass, account, **kwargs):
+        """Returns a list of supported devices"""
+        resource = klass.RESOURCE_OPTIONS + 'devices'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def events(klass, account, **kwargs):
+        """Returns a list of supported events"""
+        resource = klass.RESOURCE_OPTIONS + 'events'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def interests(klass, account, **kwargs):
+        """Returns a list of supported interests"""
+        resource = klass.RESOURCE_OPTIONS + 'interests'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def languages(klass, account, **kwargs):
+        """Returns a list of supported languages"""
+        resource = klass.RESOURCE_OPTIONS + 'languages'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def locations(klass, account, **kwargs):
+        """Returns a list of supported locations"""
+        resource = klass.RESOURCE_OPTIONS + 'locations'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def network_operators(klass, account, **kwargs):
+        """Returns a list of supported network operators"""
+        resource = klass.RESOURCE_OPTIONS + 'network_operators'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def platforms(klass, account, **kwargs):
+        """Returns a list of supported platforms"""
+        resource = klass.RESOURCE_OPTIONS + 'platforms'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def platform_versions(klass, account, **kwargs):
+        """Returns a list of supported platform versions"""
+        resource = klass.RESOURCE_OPTIONS + 'platform_versions'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def tv_markets(klass, account, **kwargs):
+        """Returns a list of supported TV markets"""
+        resource = klass.RESOURCE_OPTIONS + 'tv_markets'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
+
+    @classmethod
+    def tv_shows(klass, account, **kwargs):
+        """Returns a list of supported TV shows"""
+        resource = klass.RESOURCE_OPTIONS + 'tv_shows'
+        request = Request(account.client, 'get', resource, params=kwargs)
+        return Cursor(None, request)
 
 
 # targeting criteria properties
@@ -60,7 +152,6 @@ class FundingInstrument(Resource, Persistence):
 # read-only
 resource_property(FundingInstrument, 'id', readonly=True)
 resource_property(FundingInstrument, 'name', readonly=True)
-resource_property(FundingInstrument, 'cancelled', readonly=True, transform=TRANSFORM.BOOL)
 resource_property(FundingInstrument, 'credit_limit_local_micro', readonly=True)
 resource_property(FundingInstrument, 'currency', readonly=True)
 resource_property(FundingInstrument, 'description', readonly=True)
@@ -70,9 +161,10 @@ resource_property(FundingInstrument, 'created_at', readonly=True, transform=TRAN
 resource_property(FundingInstrument, 'updated_at', readonly=True, transform=TRANSFORM.TIME)
 resource_property(FundingInstrument, 'deleted', readonly=True, transform=TRANSFORM.BOOL)
 resource_property(FundingInstrument, 'able_to_fund', readonly=True, transform=TRANSFORM.BOOL)
-resource_property(FundingInstrument, 'paused', readonly=True, transform=TRANSFORM.BOOL)
+resource_property(FundingInstrument, 'entity_status', readonly=True)
 resource_property(FundingInstrument, 'io_header', readonly=True)
-resource_property(FundingInstrument, 'reasons_not_able_to_fund', readonly=True)
+resource_property(FundingInstrument, 'reasons_not_able_to_fund', readonly=True,
+                  transform=TRANSFORM.LIST)
 resource_property(FundingInstrument, 'start_time', readonly=True)
 resource_property(FundingInstrument, 'end_time', readonly=True)
 resource_property(FundingInstrument, 'credit_remaining_local_micro', readonly=True)
@@ -252,7 +344,7 @@ class Tweet(object):
 
         # handles array to string conversion for media IDs
         if 'media_ids' in params and isinstance(params['media_ids'], list):
-            params['media_ids'] = ','.join(map(params['media_ids']))
+            params['media_ids'] = ','.join(map(str, params['media_ids']))
 
         resource = klass.TWEET_ID_PREVIEW if params.get('id') else klass.TWEET_PREVIEW
         resource = resource.format(account_id=account.id, id=params.get('id'))
@@ -269,7 +361,7 @@ class Tweet(object):
 
         # handles array to string conversion for media IDs
         if 'media_ids' in params and isinstance(params['media_ids'], list):
-            params['media_ids'] = ','.join(map(params['media_ids']))
+            params['media_ids'] = ','.join(map(str, params['media_ids']))
 
         resource = klass.TWEET_CREATE.format(account_id=account.id)
         response = Request(account.client, 'post', resource, params=params).perform()
